@@ -135,14 +135,14 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
         pet.rvol = pet.vol.*(c1mri.vol>.2);
         pet.rvol(pet.rvol  == 0) = NaN;
         
-        disp('Saving data...')
-        pet.rhdr = pet.hdr;
-        pet.rhdr.fname = fullfile(pet.path,['sr' pet.name]);
-        pet.rhdr.private.dat.fname = pet.hdr.fname;
-        pet.rhdr.private.dat.dtype = 'FLOAT32-LE';
-        pet.rhdr.dt = [16 0];
-
-        spm_write_vol(pet.rhdr,pet.rvol);
+%         disp('Saving data...')
+%         pet.rhdr = pet.hdr;
+%         pet.rhdr.fname = fullfile(pet.path,['sr' pet.name]);
+%         pet.rhdr.private.dat.fname = pet.hdr.fname;
+%         pet.rhdr.private.dat.dtype = 'FLOAT32-LE';
+%         pet.rhdr.dt = [16 0];
+% 
+%         spm_write_vol(pet.rhdr,pet.rvol);
         
         disp('Saving data mean 50 data ...')
         pet.rThr = nanmean(pet.rvol(:));
