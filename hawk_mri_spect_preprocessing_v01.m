@@ -99,7 +99,7 @@ clear matlabbatch
 
 %%  rigidly COREG to MRI template
 disp('Coregistering MRI to template (rigid coregistration)...')
-matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(spm('Dir'),'canonical','ch2.nii,1')};
+matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(spm('Dir'),'canonical','ch2.nii,1')}; %I'm using the one exported from mricron because it has better spatial resolution of 1mm
 matlabbatch{1}.spm.spatial.coreg.estwrite.source = {fullfile(mri.pathname,mri.name)};
 matlabbatch{1}.spm.spatial.coreg.estwrite.other = {
                                                 fullfile(mri.pathname,['c1' mri.name])
