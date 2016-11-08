@@ -2,12 +2,14 @@
 SPM analysis of SPECT data based on STATISCOM and ISAS
 
 # requirements
-Matlab 2013a+, student version also working
+Matlab 2013a+, student version also working,
 spm 12 and some spm 8 files
-recommended
+
+Recommended:
 mricron 
 mricro
-64 bit system with 8 GB RAM - macOS, Windows 7-10, Linux
+
+64 bit system with 8+ GB RAM - macOS, Windows 7-10, Linux
 
 # Setting up
 This script uses Ictal, Interictal, MRI scan to coregister files to the patient's MRI space and then statistical analysis is done in Matlab and SPM 12
@@ -35,4 +37,5 @@ You can view it in your favourite nifti viewer.
 
 
 Copyright (c) 2016, Vlastimil Sulc, Department of Neurology, 2nd Faculty of Medicine, Charles University and Motol University Hospital, Prague, Czech Republic
+
 vlsulc+github(at)gmail.com
