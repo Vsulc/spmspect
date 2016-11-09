@@ -181,7 +181,7 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
         matlabbatch{2}.spm.spatial.smooth.prefix = 's';
 
         matlabbatch{3}.spm.util.imcalc.input(1) = {fullfile(mriT1.path,'sbrainmask_0.nii')};
-        matlabbatch{3}.spm.util.imcalc.output = 'brainmask';
+        matlabbatch{3}.spm.util.imcalc.output = 'brainmask_1';
         matlabbatch{3}.spm.util.imcalc.outdir = {''};  % fix to ictal.path
         matlabbatch{3}.spm.util.imcalc.expression = 'i1>0.5';
         matlabbatch{3}.spm.util.imcalc.var = struct('name', {}, 'value', {});
