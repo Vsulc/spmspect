@@ -204,7 +204,7 @@ matlabbatch{2}.spm.spatial.smooth.prefix = 's';
 
 matlabbatch{3}.spm.util.imcalc.input(1) = {fullfile(pth,['sbrainmask_0' name '.nii'])};
 matlabbatch{3}.spm.util.imcalc.output = ['brainmask_1' name '.nii'];
-matlabbatch{3}.spm.util.imcalc.outdir = {pth};  % fix to ictal.path
+matlabbatch{3}.spm.util.imcalc.outdir = {pth};  
 matlabbatch{3}.spm.util.imcalc.expression = 'i1>0.5';
 matlabbatch{3}.spm.util.imcalc.var = struct('name', {}, 'value', {});
 matlabbatch{3}.spm.util.imcalc.options.dmtx = 0;
@@ -428,20 +428,20 @@ end
 
 tic
 controlpool =   {
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' name '-' intername '.nii'])   
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN001_D1' '-' controls.prefix 'HN001_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN002_D1' '-' controls.prefix 'HN002_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN003_D1' '-' controls.prefix 'HN003_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN004_D1' '-' controls.prefix 'HN004_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN005_D1' '-' controls.prefix 'HN005_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN006_D1' '-' controls.prefix 'HN006_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN007_D1' '-' controls.prefix 'HN007_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN008_D1' '-' controls.prefix 'HN008_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN009_D1' '-' controls.prefix 'HN009_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN010_D1' '-' controls.prefix 'HN010_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN011_D1' '-' controls.prefix 'HN011_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN012_D1' '-' controls.prefix 'HN012_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN013_D1' '-' controls.prefix 'HN013_D2' '.nii'])  
+                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN014_D1' '-' controls.prefix 'HN014_D2' '.nii'])   
                   };
 alldiff.vol = zeros(size(controlpool,1),91,109,91); 
 for c = 1:size(controlpool,1)
@@ -454,7 +454,7 @@ end
 % perfusion changes
 
 avdiff.hdr = spm_vol(controlpool{1});
-avdiff.hdr.fname = 'avdiff.nii';
+avdiff.hdr.fname = fullfile(pth,'avdiff.nii');
 avdiff.vol = squeeze(sum(alldiff.vol))/size(controlpool,1);
 avdiff.hdr.dt = [16 0];
 spm_write_vol(avdiff.hdr,avdiff.vol)
@@ -463,12 +463,12 @@ spm_write_vol(avdiff.hdr,avdiff.vol)
 T.vol = (sqrt(pi)/2)*squeeze(sum(abs(alldiff.vol)))/size(controlpool,1)*sqrt(1+1/size(controlpool,1));
 % corrected according to the internet
 T.hdr = spm_vol(controlpool{1});
-T.hdr.fname = 'isas_denominator.nii';
+T.hdr.fname = fullfile(pth,'isas_denominator.nii');
 spm_write_vol(T.hdr,T.vol)
 
 Variance.hdr = spm_vol(controlpool{1});
 Variance.vol = (sqrt(pi/2))*squeeze(sum(abs(alldiff.vol)))/size(controlpool,1);
-Variance.hdr.fname = 'variance.nii';
+Variance.hdr.fname = fullfile(pth,'variance.nii');
 spm_write_vol(Variance.hdr,Variance.vol)
 
 
