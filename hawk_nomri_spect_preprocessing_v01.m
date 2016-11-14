@@ -78,7 +78,7 @@ matlabbatch{1}.spm.util.imcalc.input = {
                                        fullfile(ictal.path,'rbrainmask.nii,1')
                                         };
 matlabbatch{1}.spm.util.imcalc.output = fullfile(ictal.path,['mr' ictal.name]);
-matlabbatch{1}.spm.util.imcalc.outdir = {''};
+matlabbatch{1}.spm.util.imcalc.outdir = {ictal.path};
 matlabbatch{1}.spm.util.imcalc.expression = 'i1.*(i2>0.5)';
 %matlabbatch{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
 matlabbatch{1}.spm.util.imcalc.options.dmtx = 0;
@@ -92,7 +92,7 @@ matlabbatch{2}.spm.util.imcalc.input = {
                                        fullfile(ictal.path,'rbrainmask.nii,1')
                                         };
 matlabbatch{2}.spm.util.imcalc.output = fullfile(interictal.path,['mr' interictal.name]);
-matlabbatch{2}.spm.util.imcalc.outdir = {''};
+matlabbatch{2}.spm.util.imcalc.outdir = {interictal.path};
 matlabbatch{2}.spm.util.imcalc.expression = 'i1.*(i2>0.5)';
 matlabbatch{2}.spm.util.imcalc.options.dmtx = 0;
 matlabbatch{2}.spm.util.imcalc.options.mask = 0;
