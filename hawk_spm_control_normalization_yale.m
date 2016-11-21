@@ -10,43 +10,43 @@ addpath('/Users/vlasta/Neuro/spm12')
 spm_jobman('initcfg');
 
 FWHM.size = [16 16 16];
-controls_dir = '/Users/vlasta/Neuro/controls_preprocessing/Raw_Healthy_Normals';
+controls.dir = '/Users/vlasta/Neuro/controls_preprocessing/Raw_Healthy_Normals';
 controls.ext = '.nii';
 controls.prefix = 'f';
 
 ictalpool =   {
-                    fullfile(controls_dir,[controls.prefix 'HN001_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN002_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN003_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN004_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN005_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN006_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN007_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN008_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN009_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN010_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN011_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN012_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN013_D1' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN014_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN001_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN002_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN003_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN004_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN005_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN006_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN007_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN008_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN009_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN010_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN011_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN012_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN013_D1' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN014_D1' controls.ext])  
                   };
 
 
 interictalpool =   {
-                    fullfile(controls_dir,[controls.prefix 'HN001_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN002_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN003_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN004_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN005_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN006_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN007_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN008_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN009_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN010_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN011_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN012_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN013_D2' controls.ext])  
-                    fullfile(controls_dir,[controls.prefix 'HN014_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN001_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN002_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN003_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN004_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN005_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN006_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN007_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN008_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN009_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN010_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN011_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN012_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN013_D2' controls.ext])  
+                    fullfile(controls.dir,[controls.prefix 'HN014_D2' controls.ext])  
                   };
 
 
@@ -428,20 +428,20 @@ end
 
 tic
 controlpool =   {
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN001_D1' '-' controls.prefix 'HN001_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN002_D1' '-' controls.prefix 'HN002_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN003_D1' '-' controls.prefix 'HN003_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN004_D1' '-' controls.prefix 'HN004_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN005_D1' '-' controls.prefix 'HN005_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN006_D1' '-' controls.prefix 'HN006_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN007_D1' '-' controls.prefix 'HN007_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN008_D1' '-' controls.prefix 'HN008_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN009_D1' '-' controls.prefix 'HN009_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN010_D1' '-' controls.prefix 'HN010_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN011_D1' '-' controls.prefix 'HN011_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN012_D1' '-' controls.prefix 'HN012_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN013_D1' '-' controls.prefix 'HN013_D2' '.nii'])  
-                    fullfile(controls_dir,['mswDiffVolume' '_' controls.prefix 'HN014_D1' '-' controls.prefix 'HN014_D2' '.nii'])   
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN001_D1' '-' controls.prefix 'HN001_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN002_D1' '-' controls.prefix 'HN002_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN003_D1' '-' controls.prefix 'HN003_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN004_D1' '-' controls.prefix 'HN004_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN005_D1' '-' controls.prefix 'HN005_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN006_D1' '-' controls.prefix 'HN006_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN007_D1' '-' controls.prefix 'HN007_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN008_D1' '-' controls.prefix 'HN008_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN009_D1' '-' controls.prefix 'HN009_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN010_D1' '-' controls.prefix 'HN010_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN011_D1' '-' controls.prefix 'HN011_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN012_D1' '-' controls.prefix 'HN012_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN013_D1' '-' controls.prefix 'HN013_D2' '.nii'])  
+                    fullfile(controls.dir,['mswDiffVolume' '_' controls.prefix 'HN014_D1' '-' controls.prefix 'HN014_D2' '.nii'])   
                   };
 alldiff.vol = zeros(size(controlpool,1),91,109,91); 
 for c = 1:size(controlpool,1)
@@ -461,7 +461,7 @@ spm_write_vol(avdiff.hdr,avdiff.vol)
 
 % Yeah this is wrong version; T.vol = (squeeze((sqrt(pi)/2)*sum(abs(alldiff.vol))/size(controlpool,1))/sqrt(size(controlpool,1)));
 T.vol = (sqrt(pi)/2)*squeeze(sum(abs(alldiff.vol)))/size(controlpool,1)*sqrt(1+1/size(controlpool,1));
-% corrected according to the internet
+% corrected according to the internet  version of the article, not the pdf
 T.hdr = spm_vol(controlpool{1});
 T.hdr.fname = fullfile(pth,'isas_denominator.nii');
 spm_write_vol(T.hdr,T.vol)

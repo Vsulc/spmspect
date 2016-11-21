@@ -28,6 +28,16 @@ mriT1.fullfile = fullfile(mriT1.path,mriT1.name);
 [c1mri.name, c1mri.pathname, c1mri.exists] = uigetfile('*c1*.nii', 'Pick c1 file');
 c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
 
+if c1mri.exists==1
+            c2mri.name= strrep(c1mri.name, 'c1', 'c2');
+            c3mri.name= strrep(c1mri.name, 'c1', 'c3');
+       if   exist(c2mri.name,'file')  && exist(c3mri.name,'file')
+           skipseg=1;
+       else
+           skipseg=0;
+       end
+end
+
 
  if mriT1.exists==0   
         normalize2std{1}.spm.tools.oldnorm.estwrite.subj.source{1} = pet.fullfile;
@@ -66,7 +76,7 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
         spm_jobman('run',matlabbatch);
         clear matlabbatch
         
-            if c1mri.exists==0   
+            if skipseg==0   
                 disp('Segmenting MRI...')
                 matlabbatch{1}.spm.spatial.preproc.channel.vols = {mriT1.fullfile};
                 matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;
@@ -159,12 +169,20 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
         
         %% global normalization
         
-        
-        matlabbatch{1}.spm.util.imcalc.input = {
+        if skipseg==0 
+            matlabbatch{1}.spm.util.imcalc.input = {
                                        fullfile(mriT1.path,['c1' mriT1.name])
                                        fullfile(mriT1.path,['c2' mriT1.name])
                                        fullfile(mriT1.path,['c3' mriT1.name])
                                                 };
+        elseif skipseg==1
+            matlabbatch{1}.spm.util.imcalc.input = {
+                                        fullfile(c1mri.pathname,c1mri.name)
+                                        fullfile(c1mri.pathname,c2mri.name)
+                                        fullfile(c1mri.pathname,c3mri.name)
+                                        };
+            
+        end
         matlabbatch{1}.spm.util.imcalc.output = 'brainmask_0';
         matlabbatch{1}.spm.util.imcalc.outdir = {''}; % fix to ictal.path
         matlabbatch{1}.spm.util.imcalc.expression = 'i1+i2+i3';
