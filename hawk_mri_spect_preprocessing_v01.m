@@ -99,7 +99,7 @@ clear matlabbatch
 
 %%  rigidly COREG to MRI template
 disp('Coregistering MRI to template (rigid coregistration)...')
-matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(spm('Dir'),'canonical','ch2.nii,1')};
+matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(spm('Dir'),'canonical','ch2.nii,1')}; %I'm using the one exported from mricron because it has better spatial resolution of 1mm
 matlabbatch{1}.spm.spatial.coreg.estwrite.source = {fullfile(mri.pathname,mri.name)};
 matlabbatch{1}.spm.spatial.coreg.estwrite.other = {
                                                 fullfile(mri.pathname,['c1' mri.name])
@@ -127,7 +127,7 @@ matlabbatch{1}.spm.util.imcalc.input = {
                                        fullfile(mri.pathname,['rc3' mri.name])
                                         };
 matlabbatch{1}.spm.util.imcalc.output = 'brainmask_0';
-matlabbatch{1}.spm.util.imcalc.outdir = {''};
+matlabbatch{1}.spm.util.imcalc.outdir = {mri.pathname};
 matlabbatch{1}.spm.util.imcalc.expression = 'i1+i2+i3';
 %matlabbatch{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
 matlabbatch{1}.spm.util.imcalc.options.dmtx = 0;
@@ -143,7 +143,7 @@ matlabbatch{2}.spm.spatial.smooth.prefix = 's';
 
 matlabbatch{3}.spm.util.imcalc.input(1) = {fullfile(mri.pathname,'sbrainmask_0.nii')};
 matlabbatch{3}.spm.util.imcalc.output = 'brainmask_1';
-matlabbatch{3}.spm.util.imcalc.outdir = {''};  % fix to ictal.path
+matlabbatch{3}.spm.util.imcalc.outdir = {mri.pathname};
 matlabbatch{3}.spm.util.imcalc.expression = 'i1>0.5';
 matlabbatch{3}.spm.util.imcalc.var = struct('name', {}, 'value', {});
 matlabbatch{3}.spm.util.imcalc.options.dmtx = 0;
@@ -182,7 +182,7 @@ matlabbatch{1}.spm.util.imcalc.input = {
                                        fullfile(mri.pathname,'brainmask_1.nii')
                                         };
 matlabbatch{1}.spm.util.imcalc.output = ictal.mrfullfile;
-matlabbatch{1}.spm.util.imcalc.outdir = {''};  % fix to ictal.path
+matlabbatch{1}.spm.util.imcalc.outdir = {mri.pathname};  % fix to ictal.path
 matlabbatch{1}.spm.util.imcalc.expression = 'i1.*i2';
 %matlabbatch{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
 matlabbatch{1}.spm.util.imcalc.options.dmtx = 0;
@@ -213,7 +213,7 @@ matlabbatch{1}.spm.util.imcalc.input = {
                                        fullfile(mri.pathname,'brainmask_1.nii')
                                         };
 matlabbatch{1}.spm.util.imcalc.output = interictal.mrfullfile;
-matlabbatch{1}.spm.util.imcalc.outdir = {''};  % fix to ictal.path
+matlabbatch{1}.spm.util.imcalc.outdir = {mri.pathname};  
 matlabbatch{1}.spm.util.imcalc.expression = 'i1.*i2';
 %matlabbatch{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
 matlabbatch{1}.spm.util.imcalc.options.dmtx = 0;

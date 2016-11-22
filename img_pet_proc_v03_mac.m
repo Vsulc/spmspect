@@ -22,11 +22,21 @@ pet.smooth = 4; %technically c1 smooth
 [pet.name, pet.path, ~] = uigetfile('*PET*.nii', 'Pick PET file');
 pet.fullfile = fullfile(pet.path,pet.name);
 
-[mriT1.file, mriT1.path, mriT1.exists] = uigetfile('*MRI*.nii', 'Pick MRI or rMRI file');
-mriT1.fullfile = fullfile(mriT1.path,mriT1.file);
+[mriT1.name, mriT1.path, mriT1.exists] = uigetfile('*MRI*.nii', 'Pick MRI or rMRI file');
+mriT1.fullfile = fullfile(mriT1.path,mriT1.name);
 
-[c1mri.name, c1mri.pathname, c1mri.exists] = uigetfile('rc1*.nii', 'Pick c1 file');
+[c1mri.name, c1mri.pathname, c1mri.exists] = uigetfile('*c1*.nii', 'Pick c1 file');
 c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
+
+if c1mri.exists==1
+            c2mri.name= strrep(c1mri.name, 'c1', 'c2');
+            c3mri.name= strrep(c1mri.name, 'c1', 'c3');
+       if   exist(c2mri.name,'file')  && exist(c3mri.name,'file')
+           skipseg=1;
+       else
+           skipseg=0;
+       end
+end
 
 
  if mriT1.exists==0   
@@ -66,7 +76,7 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
         spm_jobman('run',matlabbatch);
         clear matlabbatch
         
-            if c1mri.exists==0   
+            if skipseg==0   
                 disp('Segmenting MRI...')
                 matlabbatch{1}.spm.spatial.preproc.channel.vols = {mriT1.fullfile};
                 matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;
@@ -78,11 +88,11 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
                 matlabbatch{1}.spm.spatial.preproc.tissue(1).warped = [0 0];
                 matlabbatch{1}.spm.spatial.preproc.tissue(2).tpm = {fullfile(spm('Dir'),'tpm','TPM.nii,2')};
                 matlabbatch{1}.spm.spatial.preproc.tissue(2).ngaus = 1;
-                matlabbatch{1}.spm.spatial.preproc.tissue(2).native = [0 0];
+                matlabbatch{1}.spm.spatial.preproc.tissue(2).native = [1 0];
                 matlabbatch{1}.spm.spatial.preproc.tissue(2).warped = [0 0];
                 matlabbatch{1}.spm.spatial.preproc.tissue(3).tpm = {fullfile(spm('Dir'),'tpm','TPM.nii,3')};
                 matlabbatch{1}.spm.spatial.preproc.tissue(3).ngaus = 2;
-                matlabbatch{1}.spm.spatial.preproc.tissue(3).native = [0 0];
+                matlabbatch{1}.spm.spatial.preproc.tissue(3).native = [1 0];
                 matlabbatch{1}.spm.spatial.preproc.tissue(3).warped = [0 0];
                 matlabbatch{1}.spm.spatial.preproc.tissue(4).tpm = {fullfile(spm('Dir'),'tpm','TPM.nii,4')};
                 matlabbatch{1}.spm.spatial.preproc.tissue(4).ngaus = 3;
@@ -107,7 +117,7 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
                 spm_jobman('run',matlabbatch);
                 clear matlabbatch
                 
-                c1mri.name = ['c1' mriT1.file];
+                c1mri.name = ['c1' mriT1.name];
                 c1mri.fullfile = fullfile(mriT1.path,c1mri.name);
 
             end
@@ -153,6 +163,83 @@ c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
         pet.rchdr.private.dat.dtype = 'FLOAT32-LE';
         pet.rchdr.dt = [16 0];
 
+
+        spm_write_vol(pet.rchdr,pet.rcvol);
+        
+        
+        %% global normalization
+        
+        if skipseg==0 
+            matlabbatch{1}.spm.util.imcalc.input = {
+                                       fullfile(mriT1.path,['c1' mriT1.name])
+                                       fullfile(mriT1.path,['c2' mriT1.name])
+                                       fullfile(mriT1.path,['c3' mriT1.name])
+                                                };
+        elseif skipseg==1
+            matlabbatch{1}.spm.util.imcalc.input = {
+                                        fullfile(c1mri.pathname,c1mri.name)
+                                        fullfile(c1mri.pathname,c2mri.name)
+                                        fullfile(c1mri.pathname,c3mri.name)
+                                        };
+            
+        end
+        matlabbatch{1}.spm.util.imcalc.output = 'brainmask_0';
+        matlabbatch{1}.spm.util.imcalc.outdir = {''}; % fix to ictal.path
+        matlabbatch{1}.spm.util.imcalc.expression = 'i1+i2+i3';
+        %matlabbatch{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
+        matlabbatch{1}.spm.util.imcalc.options.dmtx = 0;
+        matlabbatch{1}.spm.util.imcalc.options.mask = 0;
+        matlabbatch{1}.spm.util.imcalc.options.interp = 1;
+        matlabbatch{1}.spm.util.imcalc.options.dtype = 4;
+
+        matlabbatch{2}.spm.spatial.smooth.data(1) = {fullfile(mriT1.path,'brainmask_0.nii')};
+        matlabbatch{2}.spm.spatial.smooth.fwhm = [8 8 8];
+        matlabbatch{2}.spm.spatial.smooth.dtype = 0;
+        matlabbatch{2}.spm.spatial.smooth.im = 0;
+        matlabbatch{2}.spm.spatial.smooth.prefix = 's';
+
+        matlabbatch{3}.spm.util.imcalc.input(1) = {fullfile(mriT1.path,'sbrainmask_0.nii')};
+        matlabbatch{3}.spm.util.imcalc.output = 'brainmask';
+        matlabbatch{3}.spm.util.imcalc.outdir = {''};  % fix to ictal.path
+        matlabbatch{3}.spm.util.imcalc.expression = 'i1>0.5';
+        matlabbatch{3}.spm.util.imcalc.var = struct('name', {}, 'value', {});
+        matlabbatch{3}.spm.util.imcalc.options.dmtx = 0;
+        matlabbatch{3}.spm.util.imcalc.options.mask = 0;
+        matlabbatch{3}.spm.util.imcalc.options.interp = 1;
+        matlabbatch{3}.spm.util.imcalc.options.dtype = 4;
+        spm_jobman('run',matlabbatch);
+        clear matlabbatch
+        
+        
+        matlabbatch{1}.spm.util.imcalc.input = {
+                                       fullfile(pet.path,['r' pet.name])
+                                       fullfile(pet.path,'brainmask.nii,1')
+                                        };
+        matlabbatch{1}.spm.util.imcalc.output = fullfile(pet.path,['mr' pet.name]);
+        matlabbatch{1}.spm.util.imcalc.outdir = {''};
+        matlabbatch{1}.spm.util.imcalc.expression = 'i1.*(i2>0.5)';
+        %matlabbatch{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
+        matlabbatch{1}.spm.util.imcalc.options.dmtx = 0;
+        matlabbatch{1}.spm.util.imcalc.options.mask = 0;
+        matlabbatch{1}.spm.util.imcalc.options.interp = 1;
+        matlabbatch{1}.spm.util.imcalc.options.dtype = 4;
+
+        spm_jobman('run',matlabbatch);
+        clear matlabbatch
+
+        %ictal
+        pet.hdr = spm_vol(fullfile(pet.path,['mr' pet.name]));
+        pet.vol = spm_read_vols(pet.hdr);
+        pet.nanvol = pet.vol;
+        pet.nanvol(~pet.nanvol)=NaN;
+        rThr = nanmean(pet.nanvol(:));
+        pet.rcvol = pet.vol ./ rThr .* 50;
+
+        pet.rchdr = pet.hdr;
+        pet.rchdr.fname = fullfile(pet.path,['cmr' pet.name]);
+        pet.rchdr.private.dat.fname = pet.rchdr.fname;
+        pet.rchdr.private.dat.dtype = 'FLOAT32-LE'; %'INT16-LE', 'FLOAT32-LE'
+        pet.rchdr.dt = [16 0]; % 4=16-bit integer; 16=32-bit real datatype
 
         spm_write_vol(pet.rchdr,pet.rcvol);
 
