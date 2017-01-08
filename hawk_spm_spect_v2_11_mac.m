@@ -37,6 +37,8 @@ DELETE_Temp_Files = 0;
   [interictal.file, ~, interictal.exists] = uigetfile('cmr*Baseline*.nii', 'Pick Baseline file');
   [mriT1.file, ~, mriT1.exists] = uigetfile('*rcoT1*.nii', 'Pick MRI file');
   
+  brainmask_mri = fullfile(work_dir,'brainmask.nii');
+  
 if ictal.exists==0 || interictal.exists==0
     return
 end
@@ -119,13 +121,13 @@ spm_write_vol(DiffVolume.hdr,DiffVolume.vol) ;
 
 
 %% Normalize to standard space (w) old norm
-disp('Normalizing clinical data ...')
+disp('Normalizing to standard space ...')
 
 if mriT1.exists==0
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.source{1} = meanimage.cpfile;
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.resample = {meanimage.cpfile;DiffVolume.fullfile;interictal.cpfile;ictal.cpfile};  
 normalize2std{1}.spm.tools.oldnorm.estwrite.eoptions.template = {fullfile(spm('Dir'),'templates','SPECT.nii')};
-disp('MRI does not exist normalizing only using SPECT data ...')
+disp('MRI does not exist, normalizing only using SPECT data ...')
 elseif  mriT1.exists==2 || mriT1.exists==1
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.source{1} = mriT1.cpfile;
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.resample = {mriT1.cpfile;DiffVolume.fullfile;interictal.cpfile;ictal.cpfile};  
@@ -333,6 +335,9 @@ backnorm{1}.spm.util.defs.comp{1}.sn2def.vox = [NaN NaN NaN];
 backnorm{1}.spm.util.defs.comp{1}.sn2def.bb = [NaN NaN NaN; NaN NaN NaN];
 backnorm{1}.spm.util.defs.out{1}.push.fnames = {
 													fullfile(temp_dir,'SPMSPECT_SDcorr.nii')
+                                                    fullfile(temp_dir,['msw' ictal.name '.nii'])
+                                                    fullfile(temp_dir,['msw' interictal.name '.nii'])
+                                                    fullfile(temp_dir,'wT1.nii')
                                                    };
 backnorm{1}.spm.util.defs.out{1}.push.weight = {''};
 backnorm{1}.spm.util.defs.out{1}.push.savedir.saveusr = {temp_dir};

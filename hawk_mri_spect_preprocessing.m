@@ -21,8 +21,24 @@ DELETE_Temp_Files = 1;
 [interictal.name, interictal.path, ~] = uigetfile('*Baseline*.nii', 'Select Baseline file');
 ictal.fullfile = fullfile(ictal.path,ictal.name);
 interictal.fullfile = fullfile(interictal.path,interictal.name);
-COREG2TEMPLATE =0;
+COREG2TEMPLATE =1;
 
+[c1mri.name, c1mri.pathname, c1mri.exists] = uigetfile('*c1*.nii', 'Pick c1 file');
+c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
+
+if c1mri.exists==1 || c1mri.exists==2
+            c2mri.name= strrep(c1mri.name, 'c1', 'c2');
+            c3mri.name= strrep(c1mri.name, 'c1', 'c3');
+       if   exist(c2mri.name,'file')  && exist(c3mri.name,'file')
+           skipseg=1;
+       else
+           skipseg=0;
+       end
+else
+    skipseg=0;
+end
+
+if skipseg==0
 matlabbatch{1}.spm.spatial.preproc.channel.vols = {fullfile(mri.pathname,mri.name)};
 matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;
 matlabbatch{1}.spm.spatial.preproc.channel.biasfwhm = 60;
@@ -62,7 +78,8 @@ matlabbatch{1}.spm.spatial.preproc.warp.write = [0 0];
 spm_jobman('run',matlabbatch);
 clear matlabbatch
 
-
+else
+end
 
 % create binary brain mask
 
