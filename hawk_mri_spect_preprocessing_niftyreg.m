@@ -1,4 +1,4 @@
-function hawk_mri_spect_preprocessing_v01
+function hawk_mri_spect_preprocessing_niftyreg
 
 % If you find this script useful consider citing the original articles:
 %
@@ -97,34 +97,13 @@ matlabbatch{3}.spm.util.imcalc.options.dtype = 4;
 spm_jobman('run',matlabbatch);
 clear matlabbatch
 
-%%  rigidly COREG to MRI template
-disp('Coregistering MRI to template (rigid coregistration)...')
-matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(spm('Dir'),'canonical','ch2.nii,1')}; %I'm using the one exported from mricron because it has better spatial resolution of 1mm
-matlabbatch{1}.spm.spatial.coreg.estwrite.source = {fullfile(mri.pathname,mri.name)};
-matlabbatch{1}.spm.spatial.coreg.estwrite.other = {
-                                                fullfile(mri.pathname,['c1' mri.name])
-                                                fullfile(mri.pathname,['c2' mri.name])
-                                                fullfile(mri.pathname,['c3' mri.name])
-                                                    };
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.sep = [4 2];
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.fwhm = [7 7];
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.interp = 4;
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.wrap = [0 0 0];
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.mask = 0;
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.prefix = 'r';
-spm_jobman('run',matlabbatch);
-clear matlabbatch
 
-
-%% create binary brain mask
 disp('Creating binary mask...')
 
 matlabbatch{1}.spm.util.imcalc.input = {
-                                       fullfile(mri.pathname,['rc1' mri.name])
-                                       fullfile(mri.pathname,['rc2' mri.name])
-                                       fullfile(mri.pathname,['rc3' mri.name])
+                                       fullfile(mri.pathname,['c1' mri.name])
+                                       fullfile(mri.pathname,['c2' mri.name])
+                                       fullfile(mri.pathname,['c3' mri.name])
                                         };
 matlabbatch{1}.spm.util.imcalc.output = 'brainmask_0';
 matlabbatch{1}.spm.util.imcalc.outdir = {mri.pathname};
@@ -153,32 +132,20 @@ matlabbatch{3}.spm.util.imcalc.options.dtype = 4;
 spm_jobman('run',matlabbatch);
 clear matlabbatch
 
+
+
 %% coreg PET and SPECT to rigidly normalized MRI and mask it 
 disp('Coregistering data to rigidly normalized MRI and masking it...')
 %matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,['' mri.name])}; %fix for bad mri?
 
-ictal.rfullfile = fullfile(ictal.path,['r' ictal.name]);
-interictal.rfullfile = fullfile(interictal.path,['r' interictal.name]);
-ictal.mrfullfile = fullfile(ictal.path,['mr' ictal.name]);
-interictal.mrfullfile = fullfile(interictal.path,['mr' interictal.name]);
 
-matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,['r' mri.name])};
-matlabbatch{1}.spm.spatial.coreg.estwrite.source = {ictal.fullfile};
-matlabbatch{1}.spm.spatial.coreg.estwrite.other = {''};
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.sep = [4 2];
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.fwhm = [7 7];
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.interp = 4;
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.wrap = [0 0 0];
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.mask = 0;
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.prefix = 'r';
-spm_jobman('run',matlabbatch);
-clear matlabbatch
- 
+ictal.mrfullfile = fullfile(ictal.path,['m' ictal.name]);
+interictal.mrfullfile = fullfile(interictal.path,['m' interictal.name]);
+
+
 
 matlabbatch{1}.spm.util.imcalc.input = {
-                                       ictal.rfullfile
+                                       ictal.fullfile
                                        fullfile(mri.pathname,'brainmask_1.nii')
                                         };
 matlabbatch{1}.spm.util.imcalc.output = ictal.mrfullfile;
@@ -193,23 +160,9 @@ spm_jobman('run',matlabbatch);
 clear matlabbatch
 
 
-matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,['r' mri.name])};
-matlabbatch{1}.spm.spatial.coreg.estwrite.source = {interictal.fullfile};
-matlabbatch{1}.spm.spatial.coreg.estwrite.other = {''};
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.sep = [4 2];
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.tol = [0.02 0.02 0.02 0.001 0.001 0.001 0.01 0.01 0.01 0.001 0.001 0.001];
-matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.fwhm = [7 7];
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.interp = 4;
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.wrap = [0 0 0];
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.mask = 0;
-matlabbatch{1}.spm.spatial.coreg.estwrite.roptions.prefix = 'r';
-spm_jobman('run',matlabbatch);
-clear matlabbatch
- 
 
 matlabbatch{1}.spm.util.imcalc.input = {
-                                       interictal.rfullfile
+                                       interictal.fullfile
                                        fullfile(mri.pathname,'brainmask_1.nii')
                                         };
 matlabbatch{1}.spm.util.imcalc.output = interictal.mrfullfile;
@@ -237,7 +190,7 @@ rThr = nanmean(ictal.nanvol(:));
 ictal.rcvol = ictal.vol ./ rThr .* 50;
 
 ictal.rchdr = ictal.hdr;
-ictal.rchdr.fname = fullfile(ictal.path,['cmr' ictal.name]);
+ictal.rchdr.fname = fullfile(ictal.path,['cm' ictal.name]);
 ictal.rchdr.private.dat.fname = ictal.rchdr.fname;
 ictal.rchdr.private.dat.dtype = 'FLOAT32-LE'; %'INT16-LE', 'FLOAT32-LE'
 ictal.rchdr.dt = [16 0]; % 4=16-bit integer; 16=32-bit real datatype
@@ -255,7 +208,7 @@ rThr = nanmean(interictal.nanvol(:));
 interictal.rcvol = interictal.vol ./ rThr .* 50;
 
 interictal.rchdr = interictal.hdr;
-interictal.rchdr.fname = fullfile(interictal.path,['cmr' interictal.name]);
+interictal.rchdr.fname = fullfile(interictal.path,['cm' interictal.name]);
 interictal.rchdr.private.dat.fname = interictal.rchdr.fname;
 interictal.rchdr.private.dat.dtype = 'FLOAT32-LE'; %'INT16-LE', 'FLOAT32-LE'
 interictal.rchdr.dt = [16 0]; % 4=16-bit integer; 16=32-bit real datatype

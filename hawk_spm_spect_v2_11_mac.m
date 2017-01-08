@@ -21,8 +21,8 @@ function hawk_spm_spect_v2_11_mac
 % vlsulc@gmail.com
 
 %% setting up
-addpath('/Users/vlasta/Neuro/spm12')
-controls_dir = '/Users/vlasta/Neuro/_togo/yale-controls';
+addpath('E:\Neuro\spm12')
+controls_dir = 'E:\Neuro\_togo\yale-controls';
 groupControlName = 'Yale';  %YALE HMPAO
 FWHM_size = [16 16 16];
 FWHM.dir = ['FWHM' num2str(FWHM_size(1))];
@@ -33,9 +33,9 @@ spm_jobman('initcfg');
 DELETE_Temp_Files = 0;
 
 
-  [ictal.file, work_dir, ictal.exists] = uigetfile('cmr*Ictal*.nii', 'Pick Ictal file');
+  [ictal.file, work_dir, ictal.exists] = uigetfile('cmr*Iktal*.nii', 'Pick Ictal file');
   [interictal.file, ~, interictal.exists] = uigetfile('cmr*Baseline*.nii', 'Pick Baseline file');
-  [mriT1.file, ~, mriT1.exists] = uigetfile('*rMRI*.nii', 'Pick MRI file');
+  [mriT1.file, ~, mriT1.exists] = uigetfile('*rcoT1*.nii', 'Pick MRI file');
   
 if ictal.exists==0 || interictal.exists==0
     return
@@ -52,7 +52,7 @@ end
  if mriT1.exists==0   
     meanimage.file = fullfile(work_dir,['meanspect' ictal.ext]);
     [~, meanimage.name , meanimage.ext]  = fileparts(meanimage.file);
- elseif mriT1.exists==1
+ elseif mriT1.exists==2  || mriT1.exists==1
     [~, mriT1.name , mriT1.ext]  = fileparts(mriT1.file);
  end
 
@@ -65,6 +65,7 @@ datum = fix(clock);
 temp_dir_name = sprintf('SPM_SPECT_%s_%d-%02d-%02d-%d-%d',groupControlName,datum(1:5));
 temp_dir = [work_dir,filesep,temp_dir_name];
 mkdir(temp_dir)
+clear datum
 
 ictal.cpfile = fullfile(temp_dir,[ictal.name ictal.ext]);
 copyfile(ictal.file,ictal.cpfile)
@@ -86,7 +87,7 @@ if mriT1.exists==0
             if strcmpi(meanimage.ext,'.img,1')
                 copyfile([meanimage.file(1:end-5) 'hdr'],[meanimage.cpfile(1:end-5) 'hdr']);
             end
-elseif mriT1.exists==1  
+elseif mriT1.exists==2  || mriT1.exists==1
             mriT1.cpfile = fullfile(temp_dir,[mriT1.name mriT1.ext]);
             copyfile(mriT1.file,mriT1.cpfile)
             if strcmpi(mriT1.ext,'.img,1')
@@ -124,10 +125,12 @@ if mriT1.exists==0
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.source{1} = meanimage.cpfile;
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.resample = {meanimage.cpfile;DiffVolume.fullfile;interictal.cpfile;ictal.cpfile};  
 normalize2std{1}.spm.tools.oldnorm.estwrite.eoptions.template = {fullfile(spm('Dir'),'templates','SPECT.nii')};
-elseif mriT1.exists==1
+disp('MRI does not exist normalizing only using SPECT data ...')
+elseif  mriT1.exists==2 || mriT1.exists==1
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.source{1} = mriT1.cpfile;
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.resample = {mriT1.cpfile;DiffVolume.fullfile;interictal.cpfile;ictal.cpfile};  
-normalize2std{1}.spm.tools.oldnorm.estwrite.eoptions.template = {fullfile(spm('Dir'),'templates','T1.nii')};
+normalize2std{1}.spm.tools.oldnorm.estwrite.eoptions.template = {fullfile(spm('Dir'),'templates','T2.nii')}; %T1
+disp('MRI normalization ...')
 end
 normalize2std{1}.spm.tools.oldnorm.estwrite.subj.wtsrc = '';
 normalize2std{1}.spm.tools.oldnorm.estwrite.eoptions.weight = '';
@@ -147,7 +150,6 @@ normalize2std{1}.spm.tools.oldnorm.estwrite.roptions.prefix = 'w';
 
 spm_jobman('run',normalize2std);
 clear normalize2std;
-
 
 %% Smooth with 16 mm FWHM %% siscom smooth with 12 mm
 disp('Smoothing ...')
@@ -324,7 +326,7 @@ spm_write_vol(siscom.hdr,siscom.hypo);
 % from ictal spect space to MRI
 if mriT1.exists==0
 backnorm{1}.spm.util.defs.comp{1}.sn2def.matname = {fullfile(temp_dir,'meanspect_sn.mat')};
-elseif mriT1.exists==1
+elseif mriT1.exists==2 || mriT1.exists==1
 backnorm{1}.spm.util.defs.comp{1}.sn2def.matname = {fullfile(temp_dir,[mriT1.name '_sn.mat'])};    
 end
 backnorm{1}.spm.util.defs.comp{1}.sn2def.vox = [NaN NaN NaN];
@@ -336,7 +338,7 @@ backnorm{1}.spm.util.defs.out{1}.push.weight = {''};
 backnorm{1}.spm.util.defs.out{1}.push.savedir.saveusr = {temp_dir};
 if mriT1.exists==0
 backnorm{1}.spm.util.defs.out{1}.push.fov.file = {fullfile(temp_dir,'meanspect.nii')};
-elseif mriT1.exists==1
+elseif mriT1.exists==2 || mriT1.exists==1
 backnorm{1}.spm.util.defs.out{1}.push.fov.file = {fullfile(temp_dir,[mriT1.name mriT1.ext])};    
 end
 backnorm{1}.spm.util.defs.out{1}.push.preserve = 0;
