@@ -21,6 +21,7 @@ DELETE_Temp_Files = 1;
 [interictal.name, interictal.path, ~] = uigetfile('*Baseline*.nii', 'Select Baseline file');
 ictal.fullfile = fullfile(ictal.path,ictal.name);
 interictal.fullfile = fullfile(interictal.path,interictal.name);
+cd(mri.pathname)
 
 matlabbatch{1}.spm.spatial.preproc.channel.vols = {fullfile(mri.pathname,mri.name)};
 matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;

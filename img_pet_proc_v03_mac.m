@@ -27,8 +27,9 @@ mriT1.fullfile = fullfile(mriT1.path,mriT1.name);
 
 [c1mri.name, c1mri.pathname, c1mri.exists] = uigetfile('*c1*.nii', 'Pick c1 file');
 c1mri.fullfile = fullfile(c1mri.pathname,c1mri.name);
+cd(pet.path)
 
-if c1mri.exists==1
+if c1mri.exists==2
             c2mri.name= strrep(c1mri.name, 'c1', 'c2');
             c3mri.name= strrep(c1mri.name, 'c1', 'c3');
        if   exist(c2mri.name,'file')  && exist(c3mri.name,'file')
@@ -60,7 +61,7 @@ end
         spm_jobman('run',normalize2std);
             clear jobs;
 
- elseif mriT1.exists==1
+ elseif mriT1.exists==2
         disp('Coregistering PET to MRI...')
         matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {mriT1.fullfile};
         matlabbatch{1}.spm.spatial.coreg.estwrite.source = {pet.fullfile};
