@@ -1,4 +1,4 @@
-function hawk_mri_spect_preprocessing_v01
+function hawk_mri_spect_preprocessing_niftyreg
 
 % If you find this script useful consider citing the original articles:
 %
@@ -21,7 +21,7 @@ DELETE_Temp_Files = 1;
 [interictal.name, interictal.path, ~] = uigetfile('*Baseline*.nii', 'Select Baseline file');
 ictal.fullfile = fullfile(ictal.path,ictal.name);
 interictal.fullfile = fullfile(interictal.path,interictal.name);
-cd(mri.pathname)
+COREG2TEMPLATE =0;
 
 matlabbatch{1}.spm.spatial.preproc.channel.vols = {fullfile(mri.pathname,mri.name)};
 matlabbatch{1}.spm.spatial.preproc.channel.biasreg = 0.001;
@@ -98,6 +98,8 @@ matlabbatch{3}.spm.util.imcalc.options.dtype = 4;
 spm_jobman('run',matlabbatch);
 clear matlabbatch
 
+
+if COREG2TEMPLATE==1
 %%  rigidly COREG to MRI template
 disp('Coregistering MRI to template (rigid coregistration)...')
 matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(spm('Dir'),'canonical','ch2.nii,1')}; %I'm using the one exported from mricron because it has better spatial resolution of 1mm
@@ -119,7 +121,7 @@ spm_jobman('run',matlabbatch);
 clear matlabbatch
 
 
-%% create binary brain mask
+% create binary brain mask
 disp('Creating binary mask...')
 
 matlabbatch{1}.spm.util.imcalc.input = {
@@ -154,6 +156,44 @@ matlabbatch{3}.spm.util.imcalc.options.dtype = 4;
 spm_jobman('run',matlabbatch);
 clear matlabbatch
 
+else
+%%  create bin mask
+    disp('Creating binary mask...')
+
+matlabbatch{1}.spm.util.imcalc.input = {
+                                       fullfile(mri.pathname,['c1' mri.name])
+                                       fullfile(mri.pathname,['c2' mri.name])
+                                       fullfile(mri.pathname,['c3' mri.name])
+                                        };
+matlabbatch{1}.spm.util.imcalc.output = 'brainmask_0';
+matlabbatch{1}.spm.util.imcalc.outdir = {mri.pathname};
+matlabbatch{1}.spm.util.imcalc.expression = 'i1+i2+i3';
+%matlabbatch{1}.spm.util.imcalc.var = struct('name', {}, 'value', {});
+matlabbatch{1}.spm.util.imcalc.options.dmtx = 0;
+matlabbatch{1}.spm.util.imcalc.options.mask = 0;
+matlabbatch{1}.spm.util.imcalc.options.interp = 1;
+matlabbatch{1}.spm.util.imcalc.options.dtype = 4;
+
+matlabbatch{2}.spm.spatial.smooth.data(1) = {fullfile(mri.pathname,'brainmask_0.nii')};
+matlabbatch{2}.spm.spatial.smooth.fwhm = [8 8 8];
+matlabbatch{2}.spm.spatial.smooth.dtype = 0;
+matlabbatch{2}.spm.spatial.smooth.im = 0;
+matlabbatch{2}.spm.spatial.smooth.prefix = 's';
+
+matlabbatch{3}.spm.util.imcalc.input(1) = {fullfile(mri.pathname,'sbrainmask_0.nii')};
+matlabbatch{3}.spm.util.imcalc.output = 'brainmask_1';
+matlabbatch{3}.spm.util.imcalc.outdir = {mri.pathname};
+matlabbatch{3}.spm.util.imcalc.expression = 'i1>0.5';
+matlabbatch{3}.spm.util.imcalc.var = struct('name', {}, 'value', {});
+matlabbatch{3}.spm.util.imcalc.options.dmtx = 0;
+matlabbatch{3}.spm.util.imcalc.options.mask = 0;
+matlabbatch{3}.spm.util.imcalc.options.interp = 1;
+matlabbatch{3}.spm.util.imcalc.options.dtype = 4;
+spm_jobman('run',matlabbatch);
+clear matlabbatch
+
+end
+
 %% coreg PET and SPECT to rigidly normalized MRI and mask it 
 disp('Coregistering data to rigidly normalized MRI and masking it...')
 %matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,['' mri.name])}; %fix for bad mri?
@@ -163,7 +203,11 @@ interictal.rfullfile = fullfile(interictal.path,['r' interictal.name]);
 ictal.mrfullfile = fullfile(ictal.path,['mr' ictal.name]);
 interictal.mrfullfile = fullfile(interictal.path,['mr' interictal.name]);
 
-matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,['r' mri.name])};
+if COREG2TEMPLATE==1
+    matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,['r' mri.name])};
+else
+    matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,mri.name)};
+end
 matlabbatch{1}.spm.spatial.coreg.estwrite.source = {ictal.fullfile};
 matlabbatch{1}.spm.spatial.coreg.estwrite.other = {''};
 matlabbatch{1}.spm.spatial.coreg.estwrite.eoptions.cost_fun = 'nmi';
@@ -192,6 +236,7 @@ matlabbatch{1}.spm.util.imcalc.options.interp = 1;
 matlabbatch{1}.spm.util.imcalc.options.dtype = 4;
 spm_jobman('run',matlabbatch);
 clear matlabbatch
+
 
 
 matlabbatch{1}.spm.spatial.coreg.estwrite.ref = {fullfile(mri.pathname,['r' mri.name])};

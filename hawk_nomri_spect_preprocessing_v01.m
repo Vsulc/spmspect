@@ -25,8 +25,7 @@ meanspect.oldfullfile=fullfile(ictal.path,['mean' ictal.name]);
 
 meanspect.fullfile=fullfile(interictal.path,'meanspect.nii');
 meanspect.path=interictal.path;
-
-DELETE_Temp_Files = 1;
+cd(interictal.path)
 
 %% realign estimate and write and get mean image
 realign{1}.spm.spatial.realign.estwrite.data = {{ictal.fullfile; interictal.fullfile}}';
@@ -142,15 +141,6 @@ spm_write_vol(interictal.rchdr,interictal.rcvol);
 
 clear rThr
 
-if DELETE_Temp_Files == 1;
-    delete(fullfile(mri.pathname,['c*' mri.name]));
-    delete(fullfile(mri.pathname,'*brainmask_0.nii'));   
-    delete(fullfile(mri.pathname,'*SPECT.nii'))
-    delete(fullfile(mri.pathname,['m*' interictal.name]))
-    delete(fullfile(mri.pathname,['m*' ictal.name]))
-
-else
-end
 end
 
 
