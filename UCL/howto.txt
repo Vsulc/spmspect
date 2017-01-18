@@ -1,0 +1,7 @@
+check correct paths to spm 12 dir, ch2 file and isas_denominator file
+select MRI, Ictal and Interictal scan
+These scans should be in one directory
+Wait for till segmentation and count normalization finishes
+run hawk spm - select cmrIctal, cmrInterictal, r(MRI) images
+overlay results _Pts_ over the r(MRI) image, export in mricron or use nii in program of zour choice 
+3D slicer, ITK snap, Mricro, MRricroGL

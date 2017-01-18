@@ -6,3 +6,5 @@ UCL/hawk_nomri_spect_preprocessing_v01.m
 UCL/hawk_mri_spect_preprocessing_v01.m
 UCL/2 errors.docx
 UCL/hawk_spm_spect_v2_11_mac.m
+*.nii
+UCL/test/coT1_seg8.mat
