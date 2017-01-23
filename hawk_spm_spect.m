@@ -1,4 +1,4 @@
-function hawk_spm_spect_v2_11_mac
+function hawk_spm_spect
 % Input spect images that are already coregistered masked and count
 % normalized
 % apriori and templates folders have to be copied from spm8
@@ -337,7 +337,7 @@ backnorm{1}.spm.util.defs.out{1}.push.fnames = {
 													fullfile(temp_dir,'SPMSPECT_SDcorr.nii')
                                                     fullfile(temp_dir,['msw' ictal.name '.nii'])
                                                     fullfile(temp_dir,['msw' interictal.name '.nii'])
-                                                    fullfile(temp_dir,'wT1.nii')
+                                                    fullfile(temp_dir,['w' mriT1.name '.nii'])
                                                    };
 backnorm{1}.spm.util.defs.out{1}.push.weight = {''};
 backnorm{1}.spm.util.defs.out{1}.push.savedir.saveusr = {temp_dir};

@@ -332,7 +332,7 @@ clear rThr
 %% Cleaning up
 
 if DELETE_Temp_Files == 1;
-    delete(fullfile(mri.pathname,['c*' mri.name]));
+    %delete(fullfile(mri.pathname,['c*' mri.name]));
     delete(fullfile(mri.pathname,'*brainmask_0.nii'));   
     
 

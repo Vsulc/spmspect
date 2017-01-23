@@ -14,7 +14,7 @@ function hawk_mri_spect_preprocessing_nnm
 % vlsulc@gmail.com
 
 addpath('C:\Users\INM\Documents\IctalSPECT\spm12')
-5 addpath('E:\Neuro\spm12')
+% addpath('E:\Neuro\spm12')
 % clear classes
 
 spm_jobman('initcfg');
@@ -237,9 +237,9 @@ ictal.hdr = spm_vol(ictal.mrfullfile);
 ictal.vol = spm_read_vols(ictal.hdr);
 ictal.nvol = ictal.vol;
 
-ictal.nvol=ictal.vol(ictal.vol>0);
+%ictal.nvol=ictal.vol(ictal.vol>0);
 
-rThr = mean(ictal.nvol(:));
+rThr = mean(ictal.vol(:),'omitnan');
 
 ictal.rcvol = ictal.vol ./ rThr .* 50;
 
@@ -257,8 +257,9 @@ clear rThr
 interictal.hdr = spm_vol(interictal.mrfullfile);
 interictal.vol = spm_read_vols(interictal.hdr);
 interictal.nvol = interictal.vol;
-interictalctal.nvol=interictal.vol(ictal.vol>0);
-rThr = mean(interictal.nvol(:));
+% interictalctal.nvol=interictal.vol(ictal.vol>0);
+% rThr = mean(interictal.nvol(:));
+rThr = mean(interictal.vol(:),'omitnan');
 interictal.rcvol = interictal.vol ./ rThr .* 50;
 
 interictal.rchdr = interictal.hdr;
